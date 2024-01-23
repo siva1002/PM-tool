@@ -1,0 +1,11 @@
+env/
+*.pyc
+data/
+*.swp
+*.swo
+.dockerignore
+*.tar
+*.gz
+.DS_Store
+staticfiles
+
