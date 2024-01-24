@@ -9,7 +9,18 @@ class ProfileSerializer(serializers.ModelSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields=['email','username','password','age','phone','address',"role",'id','role']
+        fields=['email',
+                'username',
+                'password',
+                'age',
+                'phone',
+                'address',
+                "role",
+                'id',
+                'role',
+                "user_permissions",
+                "groups"    
+            ]
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)  
 

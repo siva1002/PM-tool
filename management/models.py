@@ -74,6 +74,9 @@ class Task(models.Model):
     status=models.ForeignKey(Status, related_name="tasks", on_delete=models.DO_NOTHING)
     sprint=models.ForeignKey(Sprint,related_name="tasks",on_delete=models.CASCADE,null=True)
     duedate=models.DateField(null=True)
+    class Meta:
+        verbose_name_plural='Tasks'
+        verbose_name='Task'
 
     def __str__(self) -> str:
         return f"{self.taskname}-{self.sprint.sprintname}-{self.duedate}"
