@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (User,Profile)
+from .models import (User,Profile,Roles)
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,7 +9,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields=['email','username','password','age','phone','address']
+        fields=['email','username','password','age','phone','address',"role"]
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)  
 
@@ -22,3 +22,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         model=User
         fields=['id','email','age','address','phone','username']
         read_only_fields = ('username','id')
+
+class RolesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Roles
+        fields="__all__"

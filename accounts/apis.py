@@ -1,21 +1,15 @@
-from rest_framework.generics import (ListCreateAPIView,
-                                     CreateAPIView,
-                                     RetrieveUpdateDestroyAPIView,
-                                     RetrieveUpdateAPIView)
-from .serializer import (ProfileSerializer,
-                         UserCreateSerializer,
-                         LoginViewSerializer,
-                         UserUpdateSerializer)
 from rest_framework.permissions import (AllowAny,
                                         IsAuthenticated)
-from .models import (Profile,User)
+from .models import (Profile,User,Roles)
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import authenticate,login
 from rest_framework.authtoken.models import Token
-
-class UserCreateAPIView(ListCreateAPIView):
-    serializer_class=UserCreateSerializer
+from rest_framework import generics
+from accounts import serializer
+from django.shortcuts import get_object_or_404
+class UserCreateAPIView(generics.ListCreateAPIView):
+    serializer_class=serializer.UserCreateSerializer
     queryset=User.objects.all()
     permission_classes=[AllowAny]
     
@@ -28,39 +22,63 @@ class UserCreateAPIView(ListCreateAPIView):
         users=self.get_queryset()
         if not users:
             return Response(data=[],status=200)
-        serialized=UserCreateSerializer(users,many=True)
+        serialized=serializer.UserCreateSerializer(users,many=True)
         return Response(data=serialized.data,status=200)
     
     def post(self, request, *args, **kwargs):
-        serializer = UserCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = serializer.UserCreateSerializer(data=request.data)
+        if user.is_valid():
+            user.save()
+            return Response(user.data, status=status.HTTP_201_CREATED)
+        return Response(data={"errors":user.errors}, status=status.HTTP_206_PARTIAL_CONTENT)
     
-    
-class ProfileCreateView(ListCreateAPIView):
-    serializer_class= ProfileSerializer
+
+class UserUpdateAPIview(generics.RetrieveUpdateAPIView):
+    serializer_class=serializer.UserUpdateSerializer
+    permission_classes=[IsAuthenticated]
+    queryset=User.objects.all()
+    def patch(self, request,pk, *args, **kwargs):
+        user=get_object_or_404(User,pk=pk)
+        updateuser=serializer.UserUpdateSerializer(user,data=request.data)
+        if updateuser.is_valid():
+            return Response(status=200,data=serializer.data)
+        return Response(status=status.HTTP_206_PARTIAL_CONTENT,data={"error":updateuser.errors})
+            
+class ProfileCreateView(generics.ListCreateAPIView):
+    serializer_class= serializer.ProfileSerializer
     queryset=Profile.objects.all()
     permission_classes=[IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         try:
             userprofile=Profile.objects.get(user=request.user)
-            serialized=ProfileSerializer(userprofile)
+            serialized=serializer.ProfileSerializer(userprofile)
             return Response(status=200,data=serialized.data)
         except:
             return Response(status=200,data={})
 
     def post(self, request, *args, **kwargs):
-        profile=ProfileSerializer(data=request.data)
+        profile=serializer.ProfileSerializer(data=request.data)
         if profile.is_valid():
             profile.save()
             return Response(status=200,data={"message":"Profile created successfully","data":profile.data})
+        return Response(data={"errors":profile.errors}, status=status.HTTP_206_PARTIAL_CONTENT)
     
-class LoginView(CreateAPIView):
+class ProfileUpdateDeleteAPIview(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class=serializer.ProfileSerializer
+    queryset=Profile.objects.all()
+    permission_classes=[IsAuthenticated]
+    def patch(self, request,pk,*args, **kwargs):
+            userprofile=get_object_or_404(Profile,pk=pk)
+            updateprofile=serializer.ProfileSerializer(userprofile,data=request.data)
+            if updateprofile.is_valid():
+                updateprofile.save()
+                return Response(status=200,data=serializer.data)
+            return Response(status=status.HTTP_206_PARTIAL_CONTENT,data={"error":updateprofile.errors})
 
-    serializer_class=LoginViewSerializer
+class LoginView(generics.CreateAPIView):
+
+    serializer_class=serializer.LoginViewSerializer
     permission_classes=[AllowAny]
     queryset=User.objects.all()
     def post(self, request, *args, **kwargs):
@@ -75,28 +93,30 @@ class LoginView(CreateAPIView):
             return Response(status=200,data={"message":"User Logged in successfully.","data":data})
         return Response(status=status.HTTP_404_NOT_FOUND,data={"message":"User Does Not Exist"})
         
-class ProfileUpdateDeleteAPIview(RetrieveUpdateDestroyAPIView):
-    serializer_class=ProfileSerializer
-    queryset=Profile.objects.all()
+
+class RoleCreateAPIView(generics.ListCreateAPIView):
+    serializer_class=serializer.RolesSerializer
+    queryset=Roles.objects.all()
     permission_classes=[IsAuthenticated]
-    def patch(self, request, *args, **kwargs):
-        try:
-            userprofile=Profile.objects.get(user=request.user)
-            serializer=ProfileSerializer(userprofile,data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(status=200,data=serializer.data)
-        except Exception as e:
-            return Response(status=status.HTTP_206_PARTIAL_CONTENT,data={"error":str(e)})
-        
-class UserUpdateAPIview(RetrieveUpdateAPIView):
-    serializer_class=UserUpdateSerializer
+    def list(self, request, *args, **kwargs):
+        roles=Roles.objects.all()
+        serialized=serializer.RolesSerializer(roles,many=True)
+        return Response(status=status.HTTP_200_OK,data={"data":serialized.data})
+    def create(self, request, *args, **kwargs):
+        role=serializer.RolesSerializer(data=request.data)
+        if role.is_valid():
+            role.save()
+            return Response(status=200,data={"message":"Role created successfully","data":role.data})
+        return Response(data={"errors":role.errors}, status=status.HTTP_206_PARTIAL_CONTENT)
+
+
+class RoleUpdateAPIview(generics.RetrieveUpdateAPIView):
+    serializer_class=serializer.RolesSerializer
     permission_classes=[IsAuthenticated]
-    queryset=User.objects.all()
-    def patch(self, request, *args, **kwargs):
-        user=User.objects.get(pk=request.user.id)
-        serializer=UserUpdateSerializer(user,data=request.data)
-        if serializer.is_valid():
-            return Response(status=200,data=serializer.data)
-        return Response(status=status.HTTP_206_PARTIAL_CONTENT,data={"error":serializer.errors})
-    
+    queryset=Roles.objects.all()
+    def patch(self, request,pk, *args, **kwargs):
+        role=get_object_or_404(Roles,pk=pk)
+        updaterole=serializer.RolesSerializer(role,data=request.data)
+        if updaterole.is_valid():
+            return Response(status=200,data=updaterole.data)
+        return Response(status=status.HTTP_206_PARTIAL_CONTENT,data={"error":updaterole.errors})

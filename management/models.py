@@ -1,3 +1,4 @@
+from typing import Any
 from django.db import models
 from accounts.models import User
 # Create your models here.
@@ -18,6 +19,12 @@ class Client(models.Model):
 
     def __str__(self) -> str:
         return f"{self.clientname}"
+class TechStack(models.Model):
+    stackname=models.CharField(max_length=50)
+    version=models.CharField(max_length=10)
+
+    def __str__(self) -> str:
+        return f"{self.stackname}-{self.version}"
 
 class Projects(models.Model):
     projectname=models.CharField(max_length=50,blank=False,null=False)
@@ -27,6 +34,7 @@ class Projects(models.Model):
     duedate=models.DateField()
     status=models.ForeignKey(Status, related_name="project", on_delete=models.DO_NOTHING)
     type=models.CharField(max_length=10,null=True)
+    stakeholders=models.ManyToManyField(User,related_name="project")
     planned_end_date=models.DateField(null=True)
     actual_end_date=models.DateField(null=True)
     planned_start_date=models.DateField(null=True)
@@ -36,6 +44,7 @@ class Projects(models.Model):
     cost_incurred=models.IntegerField()
     cost_Exceeded=models.IntegerField()
     tags=models.ManyToManyField(Tag)
+    techstack=models.ManyToManyField(TechStack)
 
     def __str__(self) -> str:
         return f"{self.projectname} - {self.owner.username} - {self.duedate}"
@@ -61,7 +70,6 @@ class Tasks(models.Model):
 
 class Comments(models.Model):
     comments=models.CharField(default="comments",max_length=200)
-
     def __str__(self) -> str:
         return f"{self.comments}"
 
@@ -70,5 +78,5 @@ class Notes(models.Model):
     
     def __str__(self) -> str:
         return f"{self.notes}"
-    
+
 

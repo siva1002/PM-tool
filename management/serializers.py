@@ -45,3 +45,8 @@ class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model=models.Client
         fields="__all__"
+
+class TechStackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=models.TechStack
+        fields="__all__"

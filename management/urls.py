@@ -17,7 +17,9 @@ urlpatterns = [
     path("client/<int:pk>",apis.ClientCreateAPIView.as_view()),
     path("client/",apis.ClientCreateAPIView.as_view()),
     path("notes/",apis.NotesCreateAPIview.as_view()),
-    path("notes/<int:pk>",apis.NotesUpdateAPIview.as_view())
+    path("notes/<int:pk>",apis.NotesUpdateAPIview.as_view()),
+    path("techstacks/",apis.TechStackAPIView.as_view()),
+    path("techstacks/<int:pk>",apis.TaskUpdateAPIview.as_view())
     
 
 ]

@@ -1,7 +1,7 @@
 from rest_framework.permissions import (IsAuthenticated)
 from rest_framework import generics
 from management import serializers
-from management.models import (Projects,Tag,Sprints,Tasks, Status,Comments,Notes,Client)
+from management.models import (Projects,Tag,Sprints,Tasks, Status,Comments,Notes,Client,TechStack)
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -223,3 +223,37 @@ class ClientUpdateAPIview(generics.RetrieveUpdateDestroyAPIView):
             serializer.save()
             return Response(data={"data":serializer.data,"message":"Status updated successfully"},status=status.HTTP_202_ACCEPTED),
         return Response(data={"errors":serializer.errors},status=status.HTTP_206_PARTIAL_CONTENT)
+    
+class TechStackAPIView(generics.ListCreateAPIView):
+    serializer_class=serializers.TechStackSerializer
+    queryset=TechStack.objects.all()
+    permission_classes=[IsAuthenticated]
+    def list(self, request, *args, **kwargs):
+        techstacks=TechStack.objects.all()
+        serializer=serializers.TechStackSerializer(techstacks,many=True)
+        return Response(data={"data":serializer.data,})
+    def post(self, request, *args, **kwargs):
+        serializer=serializers.TechStackSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data={"data":serializer.data,"message":"Techstack Created Successfully"})
+        return Response(data={"message":serializer.errors})
+class TechstackUpdateAPIview(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class=serializers.TechStackSerializer
+    permission_classes=[IsAuthenticated]
+    queryset=Client.objects.all()
+    def patch(self, request,pk,*args, **kwargs):
+        client=get_object_or_404(TechStack,pk=pk)
+        serializer=serializers.TechStackSerializer(request.data,client=client)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data={"data":serializer.data,"message":"Status updated successfully"},status=status.HTTP_202_ACCEPTED),
+        return Response(data={"errors":serializer.errors},status=status.HTTP_206_PARTIAL_CONTENT)
+
+
+#------------------#
+# Filter Projects  #
+#------------------#
+class FilterProjectAPIview(generics.ListAPIView):
+    def get(self, request, *args, **kwargs):
+        ...

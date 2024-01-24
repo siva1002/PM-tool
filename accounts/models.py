@@ -19,12 +19,17 @@ class UserManager(BaseUserManager):
         superuser.save()
         return superuser
 
-
+class Roles(models.Model):
+    rolename=models.CharField(max_length=50,default="role")
+    
+    def __str__(self) -> str:
+        return f"{self.rolename}"
 class User(AbstractBaseUser):
     username = models.CharField(max_length=100,unique=True,blank=False)
     age = models.IntegerField()
     address = models.CharField(max_length=100)
     phone = models.CharField(max_length=100)
+    role=models.ForeignKey(Roles,on_delete=models.SET_NULL,null=True)
     email = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     is_staff = models.BooleanField(
@@ -61,8 +66,6 @@ class User(AbstractBaseUser):
         return self.username
     
     
-
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
