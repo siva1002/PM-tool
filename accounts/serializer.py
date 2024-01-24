@@ -16,3 +16,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class LoginViewSerializer(serializers.Serializer):
     username=serializers.CharField()
     password=serializers.CharField()
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['id','email','age','address','phone','username']
+        read_only_fields = ('username','id')

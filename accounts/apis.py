@@ -1,9 +1,11 @@
 from rest_framework.generics import (ListCreateAPIView,
                                      CreateAPIView,
-                                     RetrieveUpdateDestroyAPIView)
+                                     RetrieveUpdateDestroyAPIView,
+                                     RetrieveUpdateAPIView)
 from .serializer import (ProfileSerializer,
                          UserCreateSerializer,
-                         LoginViewSerializer)
+                         LoginViewSerializer,
+                         UserUpdateSerializer)
 from rest_framework.permissions import (AllowAny,
                                         IsAuthenticated)
 from .models import (Profile,User)
@@ -86,3 +88,15 @@ class ProfileUpdateDeleteAPIview(RetrieveUpdateDestroyAPIView):
                 return Response(status=200,data=serializer.data)
         except Exception as e:
             return Response(status=status.HTTP_206_PARTIAL_CONTENT,data={"error":str(e)})
+        
+class UserUpdateAPIview(RetrieveUpdateAPIView):
+    serializer_class=UserUpdateSerializer
+    permission_classes=[IsAuthenticated]
+    queryset=User.objects.all()
+    def patch(self, request, *args, **kwargs):
+        user=User.objects.get(pk=request.user.id)
+        serializer=UserUpdateSerializer(user,data=request.data)
+        if serializer.is_valid():
+            return Response(status=200,data=serializer.data)
+        return Response(status=status.HTTP_206_PARTIAL_CONTENT,data={"error":serializer.errors})
+    

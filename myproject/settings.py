@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'myapp',
+    'accounts',
+    'management',
 ]
 
 
@@ -120,7 +121,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-AUTH_USER_MODEL='myapp.User'
+AUTH_USER_MODEL='accounts.User'
 # -----------------------#
 #  INTERNATIONALIZATION   #
 # -----------------------#
@@ -194,3 +195,25 @@ LOGGING = {
         },
     },
 }
+
+#-------------#
+# Email Config #
+#-------------#
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = os.environ["EMAIL_HOST"]
+EMAIL_PORT = os.environ["EMAIL_PORT"]
+EMAIL_HOST_USER = os.environ["EMAIL_ID"]
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_APP_PASSWORD"]
+
+#--------------#
+# Celery Config #
+#--------------#
+CELERY_BROKER_URL = os.environ.get("CELERY_URL")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_URL")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
