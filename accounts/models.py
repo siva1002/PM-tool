@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser,BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import gettext_lazy as _
-
 # Create your models here.
 class UserManager(BaseUserManager):
     def create_user(self,username,password,**extra_fields):
@@ -24,7 +24,7 @@ class Roles(models.Model):
     
     def __str__(self) -> str:
         return f"{self.rolename}"
-class User(AbstractBaseUser):
+class User(AbstractBaseUser,PermissionsMixin):
     username = models.CharField(max_length=100,unique=True,blank=False)
     age = models.IntegerField()
     address = models.CharField(max_length=100)
@@ -74,3 +74,4 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.first_name + self.last_name
+    

@@ -9,7 +9,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields=['email','username','password','age','phone','address',"role"]
+        fields=['email','username','password','age','phone','address',"role",'id','role']
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)  
 
@@ -18,12 +18,14 @@ class LoginViewSerializer(serializers.Serializer):
     password=serializers.CharField()
 
 class UserUpdateSerializer(serializers.ModelSerializer):
+    userrole=serializers.CharField(source='role.rolename',required=False)
     class Meta:
         model=User
-        fields=['id','email','age','address','phone','username']
+        fields=['id','email','age','address','phone','username','role','userrole']
         read_only_fields = ('username','id')
 
 class RolesSerializer(serializers.ModelSerializer):
     class Meta:
         model= Roles
         fields="__all__"
+

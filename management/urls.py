@@ -8,7 +8,7 @@ urlpatterns = [
     path("tag/<int:pk>",apis.TagUpdateAPIview.as_view()),
     path("sprints",apis.SprintCreateAPIview.as_view()),
     path("sprints/<int:pk>",apis.SprintsUpdateAPIview.as_view()),
-    path("task/",apis.TaskCreateAPIview.as_view()),
+    path("task/",apis.TaskCreateAPIView.as_view()),
     path("task/<int:pk>",apis.TaskUpdateAPIview.as_view()),
     path("status/<int:pk>",apis.StatusUpdateAPIview.as_view()),
     path("status/",apis.StatusCreateAPIview.as_view()),
@@ -19,7 +19,9 @@ urlpatterns = [
     path("notes/",apis.NotesCreateAPIview.as_view()),
     path("notes/<int:pk>",apis.NotesUpdateAPIview.as_view()),
     path("techstacks/",apis.TechStackAPIView.as_view()),
-    path("techstacks/<int:pk>",apis.TaskUpdateAPIview.as_view())
+    path("techstacks/<int:pk>",apis.TaskUpdateAPIview.as_view()),
+    path('timereport',apis.TimeReportCreateAPIView.as_view()),
+    path('timereport/<int:pk>',apis.TimeReportUpdateAPIView.as_view())
     
 
 ]

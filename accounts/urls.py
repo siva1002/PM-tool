@@ -9,5 +9,6 @@ urlpatterns = [
     path('profile/<int:pk>',apis.ProfileUpdateDeleteAPIview.as_view()),
     path('user/<int:pk>',apis.UserUpdateAPIview.as_view()),
     path('roles',apis.RoleCreateAPIView.as_view()),
-    path('role/<int:pk>',apis.RoleUpdateAPIview.as_view())
+    path('role/<int:pk>',apis.RoleUpdateAPIview.as_view()),
+    
 ]

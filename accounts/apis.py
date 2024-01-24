@@ -110,7 +110,7 @@ class RoleCreateAPIView(generics.ListCreateAPIView):
         return Response(data={"errors":role.errors}, status=status.HTTP_206_PARTIAL_CONTENT)
 
 
-class RoleUpdateAPIview(generics.RetrieveUpdateAPIView):
+class RoleUpdateAPIview(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=serializer.RolesSerializer
     permission_classes=[IsAuthenticated]
     queryset=Roles.objects.all()
@@ -120,3 +120,4 @@ class RoleUpdateAPIview(generics.RetrieveUpdateAPIView):
         if updaterole.is_valid():
             return Response(status=200,data=updaterole.data)
         return Response(status=status.HTTP_206_PARTIAL_CONTENT,data={"error":updaterole.errors})
+    

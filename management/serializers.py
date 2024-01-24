@@ -1,16 +1,15 @@
 from rest_framework import serializers
 from management import models
-
+import contextlib
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model=models.Projects
+        model=models.Project
         fields="__all__"
     def validate(self, data):
         if data.get('planned_start_date') > data.get('planned_end_date') or data.get('actual_start_date') > data.get('actual_end_date'):
             raise serializers.ValidationError("End date must greater than Start date")
         return super().validate(data)
-
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model=models.Tag
@@ -18,13 +17,26 @@ class TagSerializer(serializers.ModelSerializer):
 
 class SprintSerializer(serializers.ModelSerializer):
     class Meta:
-        model=models.Sprints
+        model=models.Sprint
         fields="__all__"
 
 class TaskSerializer(serializers.ModelSerializer):
+    sprintname=serializers.CharField(source="sprint.sprintname",required=False)
+    projectname=serializers.CharField(source="sprint.project.projectname",required=False)
+    ownername=serializers.CharField(source="owner.username",required=False)
     class Meta:
-        model=models.Tasks
-        fields="__all__"
+        model=models.Task
+        fields='__all__'
+    
+    
+    def validate(self, attrs):
+        try:
+            project=models.Project.objects.filter(stakeholders__in=[attrs.get('owner')]).get(sprints=attrs.get('sprints'))
+            if project:
+                return super().validate(attrs)
+        except Exception as e:
+            raise serializers.ValidationError(detail="User not assigned to project")
+        
 
 class StatusSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,12 +45,12 @@ class StatusSerializer(serializers.ModelSerializer):
 
 class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
-        model=models.Comments
+        model=models.Comment
         fields="__all__"
 
 class NotesSerializer(serializers.ModelSerializer):
     class Meta:
-        model=models.Notes
+        model=models.Note
         fields="__all__"
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -49,4 +61,9 @@ class ClientSerializer(serializers.ModelSerializer):
 class TechStackSerializer(serializers.ModelSerializer):
     class Meta:
         model=models.TechStack
+        fields="__all__"
+
+class TimeReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=models.TimeReport
         fields="__all__"
