@@ -8,5 +8,4 @@ User=get_user_model()
 
 @receiver(post_save,sender=User)
 def send_notification(sender,instance, **kwargs):
-
-    mailsender.delay(instance.email,instance.username)
+    mailsender.delay(instance.id)

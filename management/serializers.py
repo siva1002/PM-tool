@@ -31,10 +31,11 @@ class TaskSerializer(serializers.ModelSerializer):
     
     def validate(self, attrs):
         try:
-            project=models.Project.objects.filter(stakeholders__in=[attrs.get('owner')]).get(sprints=attrs.get('sprints'))
+            project=models.Sprint.objects.get(pk=attrs.get('sprint').id,project__stakeholders__in=[attrs.get('owner')])
             if project:
                 return super().validate(attrs)
         except Exception as e:
+            print(e)
             raise serializers.ValidationError(detail="User not assigned to project")
         
 
