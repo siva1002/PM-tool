@@ -26,7 +26,7 @@ def page1(request):
 
 
 
-class PasswordResetView(SuccessMessageMixin,PasswordResetView):
+class ResetPasswordResetView(SuccessMessageMixin,PasswordResetView):
     template_name = 'user/password_reset.html'
     email_template_name = 'user/password_reset_email.html'
     success_message = "We've emailed you instructions for setting your password, " \

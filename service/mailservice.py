@@ -17,7 +17,6 @@ class Mailservice:
         self.from_email=settings.EMAIL_HOST_USER
         self.recipient_list=recipient_list
     def sendmail(self,template,context,*args,**kwargs):
-        print(context)
         send_mail(self.subject,
                   self.message,
                   self.from_email,
