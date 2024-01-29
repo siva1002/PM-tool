@@ -17,9 +17,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 'address',
                 "role",
                 'id',
-                'role',
-                "user_permissions",
-                "groups"    
+                'role'    
             ]
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)  

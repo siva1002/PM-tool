@@ -24,7 +24,7 @@ class Roles(models.Model):
     
     def __str__(self) -> str:
         return f"{self.rolename}"
-class User(AbstractBaseUser,PermissionsMixin):
+class User(AbstractBaseUser):
     username = models.CharField(max_length=100,unique=True,blank=False)
     age = models.IntegerField()
     address = models.CharField(max_length=100)

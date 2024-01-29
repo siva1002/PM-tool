@@ -7,9 +7,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         model=models.Project
         fields="__all__"
     def validate(self, data):
-        if data.get('planned_start_date') > data.get('planned_end_date') or data.get('actual_start_date') > data.get('actual_end_date'):
-            raise serializers.ValidationError("End date must greater than Start date")
-        return super().validate(data)
+        if data.get('planned_start_date') <= data.get('planned_end_date') or data.get('actual_start_date') <= data.get('actual_end_date'):
+            return super().validate(data)
+        raise serializers.ValidationError("End date must greater than Start date")
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model=models.Tag

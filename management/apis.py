@@ -1,3 +1,4 @@
+from datetime import datetime,timedelta
 from rest_framework.permissions import (IsAuthenticated)
 from rest_framework import generics
 from management import serializers
@@ -317,9 +318,22 @@ class TimeReportUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
             updatimereport.save()
             return Response(status=status.HTTP_200_OK,data={"data":updatimereport.data,"message":"Timereport Updated successfully"})
         return Response(status=status.HTTP_206_PARTIAL_CONTENT,data={"error":updatimereport.errors})
+
+
 #------------------#
 # Filter Projects  #
 #------------------#
 class FilterProjectAPIview(generics.ListAPIView):
-    def get(self, request, *args, **kwargs):
-        ...
+    queryset=Project.objects.all()
+    serializer_class=serializers.ProjectSerializer
+    permission_classes=[IsAuthenticated]
+    def get(self, request,type, *args, **kwargs):
+        filtertypes=("deadline")
+        if type not in filtertypes:
+            return Response(status=206,data={"message":"Not a valid filter"})
+        if "deadline" in filtertypes:
+            today=datetime.now()
+            sevendays_from_today=today+timedelta(days=7)
+            upcoming_deadline_projects=Project.objects.filter(duedate__range=[today,sevendays_from_today])
+            serialize=serializers.ProjectSerializer(upcoming_deadline_projects,many=True)
+            return Response(status=200,data={"projects":serialize.data})

@@ -21,7 +21,10 @@ urlpatterns = [
     path("techstacks/",apis.TechStackAPIView.as_view()),
     path("techstacks/<int:pk>",apis.TaskUpdateAPIview.as_view()),
     path('timereport',apis.TimeReportCreateAPIView.as_view()),
-    path('timereport/<int:pk>',apis.TimeReportUpdateAPIView.as_view())
+    path('timereport/<int:pk>',apis.TimeReportUpdateAPIView.as_view()),
+    path('timereport/<int:pk>',apis.TimeReportUpdateAPIView.as_view()),
+    path('projects/<str:type>',apis.FilterProjectAPIview.as_view())
+
     
 
 ]

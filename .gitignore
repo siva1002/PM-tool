@@ -8,4 +8,5 @@ data/
 *.gz
 .DS_Store
 staticfiles
+migrations
 
